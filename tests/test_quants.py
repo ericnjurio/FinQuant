@@ -41,7 +41,7 @@ def test_sharpe_ratio():
 
 
 def test_sortino_ratio():
-    assert sortino_ratio(0.5, 0.0, 0.02) is np.NaN
+    assert sortino_ratio(0.5, 0.0, 0.02) is np.nan
     assert sortino_ratio(0.005, 8.5, 0.005) == 0.0
 
 
