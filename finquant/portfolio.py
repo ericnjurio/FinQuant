@@ -940,7 +940,7 @@ def _yfinance_request(
     # unlike quandl, yfinance does not have a prefix in front of the ticker
     # thus we do not need to correct them
     try:
-        resp: pd.DataFrame = yfinance.download(names, start=start_date, end=end_date)
+        resp: pd.DataFrame = yfinance.download(names, start=start_date, end=end_date, auto_adjust=False)
         if not isinstance(resp.columns, pd.MultiIndex) and len(names) > 0:
             # for single stock must make the dataframe multiindex
             stock_tuples = [(col, names[0]) for col in list(resp.columns)]
@@ -982,11 +982,11 @@ def _get_stocks_data_columns(
     reqnames: List[str] = _correct_quandl_request_stock_name(names)
     # get current column labels and replacement labels
     reqcolnames: List[str] = []
-    colname: str
     # if dataframe is of type multiindex, also get first level colname
     firstlevel_colnames: List[str] = []
     for idx, name in enumerate(names):
         for col in cols:
+            colname: str
             # differ between dataframe directly from quandl and
             # possibly previously processed dataframe, e.g.
             # read in from disk with slightly modified column labels
@@ -1013,6 +1013,10 @@ def _get_stocks_data_columns(
                         raise ValueError(
                             "Could not find column labels in the second level of MultiIndex pd.DataFrame"
                         )
+                else:
+                    raise ValueError(
+                        "Could not find column labels in the MultiIndex pd.DataFrame"
+                    )
             # else, error
             else:
                 raise ValueError("Could not find column labels in the given dataframe.")
